@@ -1,25 +1,28 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { moderateChatMessage } from '@/lib/gemini';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, user_id, event_id } = await request.json();
+    const { message, artistName, songTitle, previousMessages } = await request.json();
 
-    // Moderate with Gemini
-    const moderation = await moderateChatMessage(message);
+    const moderation = await moderateChatMessage(message, {
+      artistName,
+      songTitle,
+      previousMessages
+    });
 
     if (moderation.allowed) {
       // Save approved message to database
-      const { data: chatMessage, error } = await supabase
+      const { data: chatMessage, error } = await supabaseServer
         .from('chat_messages')
         .insert({
-          event_id,
-          user_id,
+          event_id: 'temp-event-id', // TODO: Get from request
+          user_name: 'Anonymous',
           message,
-          moderation_status: moderation.moderation_status,
-          ai_sentiment: moderation.sentiment,
-          event_timestamp_seconds: Math.floor(Date.now() / 1000)
+          sentiment: moderation.sentiment,
+          vibe: moderation.vibe,
+          moderated_by_ai: true
         })
         .select()
         .single();
@@ -32,7 +35,6 @@ export async function POST(request: NextRequest) {
         moderation
       });
     } else {
-      // Message was flagged/removed
       return NextResponse.json({
         success: false,
         moderation,

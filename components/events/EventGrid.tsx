@@ -1,11 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Event } from '@/types/database';
+import { LiveEvent } from '@/types/database';
 import { EventCard } from './EventCard';
 
 export function EventGrid() {
-  const [events, setEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<LiveEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

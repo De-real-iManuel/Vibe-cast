@@ -1,15 +1,15 @@
 import Link from 'next/link';
-import { Event } from '@/types/database';
+import { LiveEvent } from '@/types/database';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, Clock, Users } from 'lucide-react';
 
 interface EventCardProps {
-  event: Event;
+  event: LiveEvent;
 }
 
 export function EventCard({ event }: EventCardProps) {
-  const eventDate = new Date(event.scheduled_time);
+  const eventDate = new Date(event.scheduled_time || Date.now());
   const isLive = event.status === 'live';
   const isUpcoming = event.status === 'upcoming';
   const hasEnded = event.status === 'ended';
@@ -27,11 +27,11 @@ export function EventCard({ event }: EventCardProps) {
           </span>
           <div className="flex items-center text-sm text-gray-500">
             <Users className="w-4 h-4 mr-1" />
-            {event.view_count}
+            {event.viewer_count}
           </div>
         </div>
-        <CardTitle className="text-lg">{event.event_title}</CardTitle>
-        <p className="text-sm text-gray-600">{event.artist_name}</p>
+        <CardTitle className="text-lg">{event.title}</CardTitle>
+        <p className="text-sm text-gray-600">{event.artist?.name}</p>
       </CardHeader>
 
       <CardContent className="pb-3">
@@ -45,9 +45,9 @@ export function EventCard({ event }: EventCardProps) {
             {eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </div>
         </div>
-        {event.event_description && (
+        {event.description && (
           <p className="text-sm text-gray-600 mt-3 line-clamp-2">
-            {event.event_description}
+            {event.description}
           </p>
         )}
       </CardContent>
@@ -55,7 +55,7 @@ export function EventCard({ event }: EventCardProps) {
       <CardFooter className="pt-0">
         {isLive && (
           <Button asChild className="w-full bg-red-600 hover:bg-red-700">
-            <Link href={`/events/${event.id}/live`}>
+            <Link href={`/live`}>
               Join Live Stream
             </Link>
           </Button>
@@ -69,8 +69,8 @@ export function EventCard({ event }: EventCardProps) {
         )}
         {hasEnded && (
           <Button asChild variant="secondary" className="w-full">
-            <Link href={`/recap/${event.id}`}>
-              View Recap
+            <Link href={`/events/${event.id}`}>
+              View Event
             </Link>
           </Button>
         )}

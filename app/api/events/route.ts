@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 
 export async function GET() {
   try {
-    const { data: events, error } = await supabase
+    const { data: events, error } = await supabaseServer
       .from('live_events')
       .select(`
         *,

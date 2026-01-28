@@ -46,6 +46,36 @@ export interface LiveEvent {
   artist?: Artist;
 }
 
+export interface EventRecap {
+  id: string;
+  event_id: string;
+  summary_text: string;
+  highlights: Array<{
+    timestamp: number;
+    duration: number;
+    title: string;
+    description: string;
+    energy_level: number;
+    sentiment: string;
+  }>;
+  peak_moments: Array<{
+    timestamp: number;
+    type: string;
+    value: number;
+  }>;
+  sentiment_analysis: {
+    overall: string;
+    timeline: Array<{ time: number; sentiment: number }>;
+  };
+  energy_graph: Array<{ time: number; energy: number }>;
+  social_captions: {
+    twitter?: string;
+    instagram?: string;
+  };
+  generated_at: string;
+  processing_time_seconds?: number;
+}
+
 export interface ChatMessage {
   id: string;
   event_id: string;

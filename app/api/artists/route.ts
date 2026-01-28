@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 
 export async function GET() {
   try {
-    const { data: artists, error } = await supabase
+    const { data: artists, error } = await supabaseServer
       .from('artists')
       .select('*')
       .order('followers_count', { ascending: false });
